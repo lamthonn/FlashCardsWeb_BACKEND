@@ -35,69 +35,57 @@ namespace backend_v3.Services
         }
         public AddUserRole Register(AddUserRole user)
         {
-            string hashPassword = GetMD5(user.Password);
-            var newUser = new User
+            try
             {
-                Id = Guid.NewGuid().ToString(),
-                Ten = user.Ten,
-                Username = user.Username,
-                Password = hashPassword,
-                Email = "Chưa có thông tin!",
-                DiaChi = "Chưa có thông tin!",
-                GioiTinh = "Chưa có thông tin!",
-                SoDienThoai = "Chưa có thông tin!",
-                NgaySinh = DateTime.Now,
-            };
-            _context.Users.Add(newUser);
-            _context.SaveChanges();
+                var userConflic = _context.Users.FirstOrDefault(x => x.Username == user.Username);
+                if (userConflic == null)
+                {
+                    string hashPassword = GetMD5(user.Password);
+                    var newUser = new User
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Ten = user.Ten,
+                        Username = user.Username,
+                        Password = hashPassword,
+                        Email = "Chưa có thông tin!",
+                        DiaChi = "Chưa có thông tin!",
+                        GioiTinh = "Chưa có thông tin!",
+                        SoDienThoai = "Chưa có thông tin!",
+                        NgaySinh = DateTime.Now,
+                    };
+                    _context.Users.Add(newUser);
+                    _context.SaveChanges();
 
-            //đăng ký role
-            var addRoles = new List<UserRole>();
-            foreach (var role in user.RoleIds)
-            {
-                var userRole = new UserRole();
-                userRole.RoleId = role;
-                userRole.UserId = newUser.Id;
-                addRoles.Add(userRole);
+                    //đăng ký role
+                    var addRoles = new List<UserRole>();
+                    foreach (var role in user.RoleIds)
+                    {
+                        var userRole = new UserRole();
+                        userRole.RoleId = role;
+                        userRole.UserId = newUser.Id;
+                        addRoles.Add(userRole);
+                    }
+                    _context.UserRoles.AddRange(addRoles);
+                    _context.SaveChanges();
+
+                    return new AddUserRole
+                    {
+                        Id = newUser.Id,
+                        Ten = newUser.Ten,
+                        Username = newUser.Username,
+                        RoleIds = addRoles.Select(r => r.RoleId).ToList()
+                    };
+                }
+                else
+                {
+                    throw new Exception("Tài khoản đã tồn tại");
+                }
             }
-            _context.UserRoles.AddRange(addRoles);
-            _context.SaveChanges();
-
-            return new AddUserRole
+            catch (Exception ex)
             {
-                Id = newUser.Id,
-                Ten = newUser.Ten,
-                Username = newUser.Username,
-                RoleIds = addRoles.Select(r => r.RoleId).ToList()
-            };
+                throw new Exception(ex.Message);
+            }
         }
-        //public bool AssignRoleToUser(AddUserRole obj)
-        //{
-        //    try
-        //    {
-        //        var addRoles = new List<UserRole>();
-        //        var user = _context.Users.FirstOrDefault(x => x.Id == obj.UserId);
-        //        if (user == null)
-        //        {
-        //            throw new Exception("User không hợp lệ");
-        //        }
-
-        //        foreach (var role in obj.RoleIds)
-        //        {
-        //            var userRole = new UserRole();
-        //            userRole.RoleId = role;
-        //            userRole.UserId = user.Id;
-        //            addRoles.Add(userRole);
-        //        }
-        //        _context.UserRoles.AddRange(addRoles);
-        //        _context.SaveChanges();
-        //        return true;
-        //    }
-        //    catch (Exception ex) 
-        //    {
-        //        return false;
-        //    }
-        //}
 
         public Role AddRole(Role role)
         {
@@ -146,12 +134,12 @@ namespace backend_v3.Services
                 }
                 else
                 {
-                    throw new Exception("tài khoản không hợp lệ!") ;
+                    return "tài khoản không hợp lệ!";
                 }
             }
             else
             {
-                throw new Exception("chưa nhập username và password!") ;
+                return "chưa nhập username và password!";
             }
         }
     }

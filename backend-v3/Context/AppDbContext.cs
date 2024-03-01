@@ -1,4 +1,4 @@
-﻿using backend_v3.Models;
+﻿ using backend_v3.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend_v3.Context
@@ -11,14 +11,41 @@ namespace backend_v3.Context
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<HocPhan> HocPhans { get; set; }
+        public DbSet<ThuMuc> ThuMucs { get; set; }
+        public DbSet<TheHoc> TheHocs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.HasKey(x => x.Id);
+            });
+
             modelBuilder.Entity<HocPhan>(entity =>
             {
                 entity.HasKey(x => x.Id);
                 entity.ToTable("tbl_HocPhan");
             });
+
+            modelBuilder.Entity<ThuMuc>(entity =>
+            {
+                entity.HasKey(x => x.Id);
+                entity.ToTable("tbl_ThuMuc");
+                entity.HasMany(e => e.HocPhans)
+                    .WithOne(e => e.ThuMuc)
+                    .HasForeignKey(x => x.ThuMucId);
+            });
+
+            modelBuilder.Entity<TheHoc>(entity =>
+            {
+                entity.HasKey(x=> x.Id);
+                entity.ToTable("tbl_TheHoc");
+                entity.HasOne(e => e.HocPhan)
+                    .WithMany(e => e.TheHocs)
+                    .HasForeignKey(k => k.HocPhanId);
+            });
+
         }
     }
 }
+

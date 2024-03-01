@@ -6,10 +6,14 @@ namespace backend_v3.Models
     {
         public string Id { get; set; }
         public string TieuDe { get; set; }
-        public string MoTa { get; set; } = null!;
-        public DateTime NgaySua { get; set; }
+        public string? MoTa { get; set; } = null!;
+        public DateTime? NgaySua { get; set; }
         public string UserId { get; set; }
         [ForeignKey(nameof(UserId))]
-        public virtual User User { get; set; }
+        public virtual User? User { get; set; }
+        public string ThuMucId { get; set; }
+        [ForeignKey(nameof(ThuMucId))]
+        public virtual ThuMuc? ThuMuc { get; set; }
+        public virtual List<TheHoc>? TheHocs { get; set; }
     }
 }

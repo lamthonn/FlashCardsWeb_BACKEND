@@ -12,8 +12,8 @@ using backend_v3.Context;
 namespace backend_v3.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240220035507_addProperties")]
-    partial class addProperties
+    [Migration("20240301011823_update2")]
+    partial class update2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,38 @@ namespace backend_v3.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("backend_v3.Models.HocPhan", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("MoTa")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("NgaySua")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ThuMucId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("TieuDe")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ThuMucId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("tbl_HocPhan", (string)null);
+                });
 
             modelBuilder.Entity("backend_v3.Models.Role", b =>
                 {
@@ -46,13 +78,56 @@ namespace backend_v3.Migrations
                     b.ToTable("Roles");
                 });
 
+            modelBuilder.Entity("backend_v3.Models.TheHoc", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<byte[]>("HinhAnh")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("HocPhanId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("NgonNgu1")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NgonNgu2")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HocPhanId");
+
+                    b.ToTable("tbl_TheHoc", (string)null);
+                });
+
+            modelBuilder.Entity("backend_v3.Models.ThuMuc", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("MoTa")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TieuDe")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("tbl_ThuMuc", (string)null);
+                });
+
             modelBuilder.Entity("backend_v3.Models.User", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("DiaChi")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
@@ -60,10 +135,9 @@ namespace backend_v3.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("GioiTinh")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("NgaySinh")
+                    b.Property<DateTime?>("NgaySinh")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Password")
@@ -71,7 +145,6 @@ namespace backend_v3.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SoDienThoai")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Ten")
@@ -111,6 +184,36 @@ namespace backend_v3.Migrations
                     b.ToTable("UserRoles");
                 });
 
+            modelBuilder.Entity("backend_v3.Models.HocPhan", b =>
+                {
+                    b.HasOne("backend_v3.Models.ThuMuc", "ThuMuc")
+                        .WithMany("HocPhans")
+                        .HasForeignKey("ThuMucId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("backend_v3.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ThuMuc");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("backend_v3.Models.TheHoc", b =>
+                {
+                    b.HasOne("backend_v3.Models.HocPhan", "HocPhan")
+                        .WithMany("TheHocs")
+                        .HasForeignKey("HocPhanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("HocPhan");
+                });
+
             modelBuilder.Entity("backend_v3.Models.UserRole", b =>
                 {
                     b.HasOne("backend_v3.Models.Role", "Role")
@@ -128,6 +231,16 @@ namespace backend_v3.Migrations
                     b.Navigation("Role");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("backend_v3.Models.HocPhan", b =>
+                {
+                    b.Navigation("TheHocs");
+                });
+
+            modelBuilder.Entity("backend_v3.Models.ThuMuc", b =>
+                {
+                    b.Navigation("HocPhans");
                 });
 #pragma warning restore 612, 618
         }

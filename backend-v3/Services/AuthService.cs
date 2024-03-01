@@ -91,7 +91,6 @@ namespace backend_v3.Services
         {
             var newRole = new Role
             {
-                Id = role.Id,
                 Name = role.Name,
                 Description = role.Description,
             };

@@ -5,9 +5,9 @@ namespace backend_v3.Interfaces
 {
     public interface IAuthService
     {
-        AddUserRole Register (AddUserRole user);
-        string Login(LoginRequest loginRequest);
-        Role AddRole (Role role);
+        public AddUserRole Register (AddUserRole user);
+        public string Login(LoginRequest loginRequest);
+        public Role AddRole (Role role);
         //bool AssignRoleToUser(AddUserRole obj);
     }
 }

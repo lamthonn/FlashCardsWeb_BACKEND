@@ -7,7 +7,9 @@ namespace backend_v3.Models
         public string Id { get; set; }
         public string TieuDe { get; set; }
         public string? MoTa { get; set; } = null!;
+        public DateTime? NgayTao { get; set; }
         public DateTime? NgaySua { get; set; }
+        public string? TrangThai { get; set; }
         public string UserId { get; set; }
         [ForeignKey(nameof(UserId))]
         public virtual User? User { get; set; }

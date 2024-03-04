@@ -104,7 +104,7 @@ namespace backend_v3.Services
         {
             if(loginRequest.Username != null && loginRequest.Password != null)
             {
-                var user = _context.Users.FirstOrDefault(x => x.Username == loginRequest.Username && x.Password == GetMD5(loginRequest.Password));
+                var user = _context.Users.FirstOrDefault(x => x.Username == loginRequest.Username &&  x.Password == GetMD5(loginRequest.Password));
                 if (user != null)
                 {
                     var claims = new List<Claim> {

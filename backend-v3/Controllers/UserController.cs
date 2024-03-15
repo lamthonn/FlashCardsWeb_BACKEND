@@ -30,5 +30,18 @@ namespace backend_v3.Controllers
                 throw new Exception(ex.Message);
             }
         }
+        [HttpPut]
+        public IActionResult EditInforUser(string id, UserDto userData)
+        {
+            try
+            {
+                _service.EditInforUser(id, userData);
+                return NoContent();
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
     }
 }

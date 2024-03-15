@@ -19,6 +19,7 @@ namespace backend_v3.Context
             modelBuilder.Entity<User>(entity =>
             {
                 entity.HasKey(x => x.Id);
+                entity.ToTable("Users");
             });
 
             modelBuilder.Entity<HocPhan>(entity =>

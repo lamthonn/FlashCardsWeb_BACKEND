@@ -31,16 +31,16 @@ namespace backend_v3.Controllers
             }
         }
         [HttpPut]
-        public IActionResult EditInforUser(string id, UserDto userData)
+        public async Task<bool> EditInforUser(string id, UserDto userData)
         {
             try
             {
-                _service.EditInforUser(id, userData);
-                return NoContent();
+                await _service.EditInforUser(id, userData);
+                return true;
             }
             catch
             {
-                return BadRequest();
+                return false;
             }
         }
     }

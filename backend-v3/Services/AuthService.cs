@@ -3,6 +3,7 @@ using backend_v3.Dto;
 using backend_v3.Interfaces;
 using backend_v3.Models;
 using Microsoft.IdentityModel.Tokens;
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -139,6 +140,67 @@ namespace backend_v3.Services
             else
             {
                 return "chưa nhập username và password!";
+            }
+        }
+
+        public async Task<UserDto> RegisterWithFacebook(UserDto user)
+        {
+            var userOld = _context.Users.Where(x => x.Id == user.Id).FirstOrDefault();
+            if (userOld == null)
+            {
+                // Convert timestamp to DateTime
+                DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeMilliseconds(long.Parse(user.NgaySinh!));
+
+                // Get DateTime object
+                DateTime dateTime = dateTimeOffset.DateTime;
+                var newUser = new User
+                {
+                    Id = user.Id,
+                    Email = user.Email,
+                    Ten = user.Ten,
+                    Username = Guid.NewGuid().ToString(),
+                    Password = Guid.NewGuid().ToString(),
+                    DiaChi = user.DiaChi,
+                    GioiTinh = user.GioiTinh,
+                    NgaySinh = dateTime,
+                    SoDienThoai = user.SoDienThoai
+                };
+
+                _context.Users.Add(newUser);
+                await _context.SaveChangesAsync(new CancellationToken());
+
+                var newUserRole = new UserRole
+                {
+                    UserId = user.Id,
+                    RoleId = 2
+                };
+                _context.UserRoles.Add(newUserRole);
+                await _context.SaveChangesAsync(new CancellationToken());
+
+                return new UserDto
+                {
+                    Id = userOld.Id,
+                    Email = userOld.Email,
+                    Ten = userOld.Ten,
+                    DiaChi = userOld.DiaChi,
+                    GioiTinh = userOld.GioiTinh,
+                    NgaySinh = userOld.NgaySinh!.Value.ToString("dd/MM/yyyy"),
+                    SoDienThoai = user.SoDienThoai
+                };
+            }
+            else
+            {
+                var userr = new UserDto
+                {
+                    Id = userOld.Id,
+                    Email = userOld.Email,
+                    Ten = userOld.Ten,
+                    DiaChi = userOld.DiaChi,
+                    GioiTinh = userOld.GioiTinh,
+                    NgaySinh = userOld.NgaySinh!.Value.ToString("dd/MM/yyyy"),
+                    SoDienThoai = user.SoDienThoai
+                };
+               return userr;
             }
         }
     }

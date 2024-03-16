@@ -47,6 +47,7 @@ builder.Services.AddRazorPages();
 //service register
 builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<IFacebookAuthenticator, FacebookAuthenticator>();
 
 var app = builder.Build();
 

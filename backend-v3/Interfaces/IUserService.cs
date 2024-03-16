@@ -6,7 +6,7 @@ namespace backend_v3.Interfaces
     public interface IUserService
     {
         public Task<UserDto> GetUserById(string id);
-        public Task<UserDto> EditInforUser(string id, UserDto userData);
+        public Task EditInforUser(string id, UserDto userData);
 
     }
 }

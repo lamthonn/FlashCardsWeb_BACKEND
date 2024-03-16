@@ -39,34 +39,38 @@ namespace backend_v3.Services
             return result;
         }
 
-        public async Task<UserDto> EditInforUser(string id, UserDto userData)
+        public async Task  EditInforUser(string id, UserDto userData)
         {
-            if (string.IsNullOrEmpty(id))
+            try
             {
-                throw new Exception("Không tìm thấy id người dùng");
-            }
+                if (string.IsNullOrEmpty(id))
+                {
+                    throw new Exception("Không tìm thấy id người dùng");
+                }
 
-            var userToUpdate = _context.Users.FirstOrDefault(x => x.Id == id);
-            if (userToUpdate == null)
+                var data = _context.Users.FirstOrDefault(x => x.Id == id);
+                if (data == null)
+                {
+                    throw new Exception("User không tồn tại!");
+                }
+
+                // Cập nhật thông tin của người dùng
+                data.Ten = userData.Ten;
+                data.Username = userData.Username;
+                data.Email = userData.Email;
+                data.DiaChi = userData.DiaChi;
+                data.GioiTinh = userData.GioiTinh;
+                data.NgaySinh = DateTime.ParseExact(userData.NgaySinh, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                data.SoDienThoai = userData.SoDienThoai;
+
+                // Lưu thay đổi vào cơ sở dữ liệu
+                _context.Users.Update(data);
+                await _context.SaveChangesAsync(new CancellationToken());
+            }
+            catch (Exception ex)
             {
-                throw new Exception("User không tồn tại!");
+                throw new Exception(ex.Message);
             }
-
-            // Cập nhật thông tin của người dùng
-            userToUpdate.Ten = userData.Ten;
-            userToUpdate.Username = userData.Username;
-            userToUpdate.Email = userData.Email;
-            userToUpdate.DiaChi = userData.DiaChi;
-            userToUpdate.GioiTinh = userData.GioiTinh;
-            userToUpdate.NgaySinh = DateTime.ParseExact(userData.NgaySinh, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-            userToUpdate.SoDienThoai = userData.SoDienThoai;
-
-            // Lưu thay đổi vào cơ sở dữ liệu
-            _context.Users.Update(userToUpdate);
-            await _context.SaveChangesAsync(new CancellationToken());
-
-            // Trả về thông tin người dùng đã được cập nhật
-            return userData;
         }
     }
 }

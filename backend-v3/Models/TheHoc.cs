@@ -1,6 +1,8 @@
-﻿namespace backend_v3.Models
+﻿using backend_v3.Models.common;
+
+namespace backend_v3.Models
 {
-    public class TheHoc
+    public class TheHoc : BaseModel
     {
         public string Id { get; set; }
         public string NgonNgu1 { get; set; }

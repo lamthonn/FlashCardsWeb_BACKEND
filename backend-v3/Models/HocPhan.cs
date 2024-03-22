@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using backend_v3.Models.common;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace backend_v3.Models
 {
-    public class HocPhan
+    public class HocPhan : BaseModel
     {
         public string Id { get; set; }
         public string TieuDe { get; set; }
@@ -10,6 +11,7 @@ namespace backend_v3.Models
         public DateTime? NgayTao { get; set; }
         public DateTime? NgaySua { get; set; }
         public string? TrangThai { get; set; }
+        public int? SoTheHoc { get; set; }
         public string UserId { get; set; }
         [ForeignKey(nameof(UserId))]
         public virtual User? User { get; set; }

@@ -10,5 +10,6 @@
         public string? GioiTinh { get; set; }
         public string? SoDienThoai { get; set; } 
         public string? DiaChi { get; set; }
+
     }
 }

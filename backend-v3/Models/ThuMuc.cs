@@ -1,7 +1,9 @@
-﻿namespace backend_v3.Models
+﻿using backend_v3.Models.common;
+
+namespace backend_v3.Models
 {
-    public class ThuMuc
-    {
+    public class ThuMuc : BaseModel
+    { 
         public string Id { get; set; }
         public string TieuDe { get; set; }
         public string? MoTa { get; set; }

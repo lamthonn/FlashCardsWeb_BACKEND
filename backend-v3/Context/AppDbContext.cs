@@ -13,6 +13,8 @@ namespace backend_v3.Context
         public DbSet<HocPhan> HocPhans { get; set; }
         public DbSet<ThuMuc> ThuMucs { get; set; }
         public DbSet<TheHoc> TheHocs { get; set; }
+        public DbSet<NgonNgu> NgonNgus { get; set; }
+        public DbSet<YkienGopY> YkienGopYs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -46,6 +48,17 @@ namespace backend_v3.Context
                     .HasForeignKey(k => k.HocPhanId);
             });
 
+            modelBuilder.Entity<NgonNgu>(entity =>
+            {
+                entity.HasKey(x => x.Id);
+                entity.ToTable("tbl_NgonNgu");
+            });
+
+            modelBuilder.Entity<YkienGopY>(entity =>
+            {
+                entity.HasKey(x => x.Id);
+                entity.ToTable("tbl_YKienGopY");
+            });
         }
     }
 }

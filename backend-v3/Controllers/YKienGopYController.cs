@@ -1,29 +1,63 @@
 ﻿using backend_v3.Dto;
-using backend_v3.Dto.Common;
 using backend_v3.Interfaces;
 using backend_v3.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.StaticFiles;
 
 namespace backend_v3.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class HocPhanController : ControllerBase
+    public class YKienGopYController : ControllerBase
     {
-        private readonly IHocPhanService _services;
-        public HocPhanController(IHocPhanService services)
+        private readonly IYKienGopYService _services;
+        public YKienGopYController(IYKienGopYService services)
         {
             _services = services;
         }
 
         [HttpGet]
-        public Task<List<HocPhan>> GetAllHocPhan ([FromQuery] string? ThuMucId, string? keySearch)
+        public Task<PaginatedList<YKienGopYDo>> GetAllYKien([FromQuery] YKienGopYRequest request)
         {
             try
             {
-                return _services.GetAllHocPhan(ThuMucId, keySearch);
+                return _services.GetPaginYKienGopY(request);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        [HttpGet]
+        public Task<PaginatedList<YKienGopYDo>> GetYKienGopY([FromQuery] YKienGopYRequest request)
+        {
+            try
+            {
+                return _services.GetYKienGopY(request);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        [HttpGet]
+        public Task<YKienGopYDo> GetYKienById([FromQuery] string id)
+        {
+            try
+            {
+                return _services.GetYKienById(id);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        [HttpDelete]
+        public Task DeleteYKienById([FromQuery] string id)
+        {
+            try
+            {
+                return _services.DeleteYKienById(id);
             }
             catch (Exception ex)
             {
@@ -32,76 +66,23 @@ namespace backend_v3.Controllers
         }
 
         [HttpPost]
-        public async Task<string> ThemHocPhan ([FromBody] HocPhanParams _params)
+        public Task<YkienGopY> ThemYKien(YKienGopYDo data)
         {
             try
             {
-                await _services.ThemHocPhan(_params);
-                return "OK";
-            }catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        [HttpGet]
-        public Task<HocPhanDto> HocPhanName(string id)
-        {
-            try
-            {
-                return _services.GetHocPhanName(id);
+                return _services.ThemYKien(data);
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
         }
-
-        [HttpGet]
-        public Task<List<TheHoc>> GetTheHocById([FromQuery] string id)
-        {
-            try
-            {
-                return _services.GetHocPhanById(id);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        [HttpDelete]
-        public Task DeleteHocPhan( string id)
-        {
-            try
-            {
-                return _services.DeleteHocPhan(id);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-        
         [HttpPut]
-        public Task EditHocPhan( string id, HocPhanParams data)
+        public Task PhanHoi(string id, string data)
         {
             try
             {
-                return _services.EditHocPhan(id, data);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        [HttpGet]
-        public Task<List<TheHoc>> GetRandom(string id)
-        {
-            try
-            {
-                return _services.GetRandom(id);
+                return _services.PhanHoi(id,data);
             }
             catch (Exception ex)
             {

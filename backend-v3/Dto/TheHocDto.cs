@@ -7,6 +7,8 @@
         public string? NgonNgu2 { get; set; }
         public byte[]? HinhAnh { get; set; }
         public string? HocPhanId { get; set; }
+        public string? ThuatNgu { get; set; }
+        public string? GiaiThich { get; set; }
         public bool? IsKnow { get; set; } = false;
         public DateTime Created { get; set; }
         public string? CreatedBy { get; set; }

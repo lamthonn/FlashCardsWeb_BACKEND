@@ -1,4 +1,5 @@
 using backend_v3.Context;
+using backend_v3.Controllers.common;
 using backend_v3.Interfaces;
 using backend_v3.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -44,12 +45,19 @@ builder.Services.AddCors(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddRazorPages();
+
+//Mail setting
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+
 //service register
 builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IFacebookAuthenticator, FacebookAuthenticator>();
 builder.Services.AddTransient<IHocPhanService, HocPhanService>();
 builder.Services.AddTransient<IThuMucService, ThuMucService>();
+builder.Services.AddTransient<IMailService, MailService>();
+builder.Services.AddTransient<IYKienGopYService, YKienGopYService>();
+
 
 var app = builder.Build();
 
@@ -59,7 +67,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseStaticFiles();
 app.UseHttpsRedirection();
 
 app.UseCors(MyAllowSpecificOrigins);

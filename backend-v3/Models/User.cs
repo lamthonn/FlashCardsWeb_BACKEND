@@ -13,5 +13,6 @@ namespace backend_v3.Models
         public string? GioiTinh { get; set; } = null!;
         public string? SoDienThoai { get; set; } = null!;
         public string? DiaChi { get; set; } = null!;
+        public string? AnhDaiDien { get; set; } = null!;
     }
 }

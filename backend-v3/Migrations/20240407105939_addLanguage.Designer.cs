@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using backend_v3.Context;
 
@@ -11,9 +12,11 @@ using backend_v3.Context;
 namespace backend_v3.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240407105939_addLanguage")]
+    partial class addLanguage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -124,9 +127,6 @@ namespace backend_v3.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("GiaiThich")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<byte[]>("HinhAnh")
                         .HasColumnType("varbinary(max)");
 
@@ -149,9 +149,6 @@ namespace backend_v3.Migrations
 
                     b.Property<string>("NgonNgu2")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ThuatNgu")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -255,41 +252,6 @@ namespace backend_v3.Migrations
                     b.ToTable("UserRoles");
                 });
 
-            modelBuilder.Entity("backend_v3.Models.YkienGopY", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NoiDung")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhanHoi")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("tbl_YKienGopY", (string)null);
-                });
-
             modelBuilder.Entity("backend_v3.Models.HocPhan", b =>
                 {
                     b.HasOne("backend_v3.Models.ThuMuc", "ThuMuc")
@@ -335,17 +297,6 @@ namespace backend_v3.Migrations
                         .IsRequired();
 
                     b.Navigation("Role");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("backend_v3.Models.YkienGopY", b =>
-                {
-                    b.HasOne("backend_v3.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
                     b.Navigation("User");
                 });

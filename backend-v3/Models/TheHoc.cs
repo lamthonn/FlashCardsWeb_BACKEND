@@ -9,6 +9,8 @@ namespace backend_v3.Models
         public string NgonNgu2 { get; set; }
         public byte[]? HinhAnh { get; set; }
         public string HocPhanId { get; set; }
+        public string? ThuatNgu { get; set; }
+        public string? GiaiThich { get; set; }
         public bool? IsKnow { get; set; } = false;
         public virtual HocPhan? HocPhan { get; set; }
     }

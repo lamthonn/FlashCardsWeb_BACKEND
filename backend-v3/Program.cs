@@ -1,10 +1,12 @@
 using backend_v3.Context;
 using backend_v3.Controllers.common;
 using backend_v3.Interfaces;
+using backend_v3.Seriloger;
 using backend_v3.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using System;
 using System.Text;
 
@@ -13,6 +15,11 @@ var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 // Add services to the container.
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("connect")));
+
+//??c config t? trong appsettings.json
+builder.Host.UseSerilog((context, config) => config.ReadFrom.Configuration(context.Configuration));
+//c?u hình ?? ghi log vào DB
+builder.Host.UseSerilog(Serilogger.ConfigureLogToDatabase);
 
 builder.Services.AddControllers();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
@@ -57,6 +64,7 @@ builder.Services.AddTransient<IHocPhanService, HocPhanService>();
 builder.Services.AddTransient<IThuMucService, ThuMucService>();
 builder.Services.AddTransient<IMailService, MailService>();
 builder.Services.AddTransient<IYKienGopYService, YKienGopYService>();
+builder.Services.AddTransient<INhatKyHeThongService, NhatKyHeThongService>();
 
 
 var app = builder.Build();

@@ -15,6 +15,8 @@ namespace backend_v3.Context
         public DbSet<TheHoc> TheHocs { get; set; }
         public DbSet<NgonNgu> NgonNgus { get; set; }
         public DbSet<YkienGopY> YkienGopYs { get; set; }
+        public DbSet<NhatKyHoatDong> NhatKyHoatDongs { get; set; }
+        public DbSet<Blog> blogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -22,6 +24,18 @@ namespace backend_v3.Context
             {
                 entity.HasKey(x => x.Id);
                 entity.ToTable("Users");
+            });
+
+            modelBuilder.Entity<Blog>(entity =>
+            {
+                entity.HasKey(x => x.Id);
+                entity.ToTable("tbl_Blog");
+            });
+
+            modelBuilder.Entity<NhatKyHoatDong>(entity =>
+            {
+                entity.HasKey(x => x.Id);
+                entity.ToTable("NhatKyHeThong");
             });
 
             modelBuilder.Entity<HocPhan>(entity =>

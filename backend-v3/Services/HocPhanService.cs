@@ -116,7 +116,7 @@ namespace backend_v3.Services
             }
         }
 
-        public async Task<List<HocPhan>> GetAllHocPhan([FromQuery] string? ThuMucId, string? keySearch)
+        public async Task<List<HocPhan>> GetAllHocPhan([FromQuery] string? ThuMucId, string? keySearch, string? userId)
         {
             var data = _context.HocPhans.AsNoTracking();
             if (!string.IsNullOrEmpty(ThuMucId))
@@ -126,6 +126,10 @@ namespace backend_v3.Services
             if (!string.IsNullOrEmpty(keySearch))
             {
                 data = data.Where(x => x.TieuDe == keySearch);
+            }
+            if (!string.IsNullOrEmpty(userId))
+            {
+                data = data.Where(x => x.UserId == userId);
             }
             var result = await data.ToListAsync();
             return result;

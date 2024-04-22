@@ -1,8 +1,9 @@
 ﻿using backend_v3.Dto.Common;
+using backend_v3.Seriloger;
 
 namespace backend_v3.Dto
 {
-    public class UserDto 
+    public class UserDto : DtoToLogging 
     {
         public string Id { get; set; }
         public string? Username { get; set; }

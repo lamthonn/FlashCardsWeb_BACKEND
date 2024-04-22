@@ -4,6 +4,7 @@ using backend_v3.Dto;
 using backend_v3.Dto.Common;
 using backend_v3.Interfaces;
 using backend_v3.Models;
+using backend_v3.Seriloger;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -12,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
+using Ilogger = Serilog.ILogger;
 
 namespace backend_v3.Controllers
 {
@@ -23,12 +25,16 @@ namespace backend_v3.Controllers
         private readonly IWebHostEnvironment _environment;
         private readonly AppDbContext _context;
         private readonly IMailService _mail_sevice;
-        public UserController(IUserService service, IWebHostEnvironment environment, AppDbContext context, IMailService mail_sevice)
+        private readonly Ilogger _logger;
+        private readonly LoggingCommon _loggingCommon;
+        public UserController(IUserService service, Ilogger logger, IWebHostEnvironment environment, AppDbContext context, IMailService mail_sevice)
         {
             _service = service;
             _environment = environment;
             _context = context;
             _mail_sevice = mail_sevice;
+            _logger = logger;
+            _loggingCommon = new LoggingCommon(_logger, _context);
         }
 
         [HttpGet]
@@ -86,15 +92,25 @@ namespace backend_v3.Controllers
         }
 
         [HttpPost]
-        public Task<UserDto> AddUser(UserDto user)
+        public async Task<UserDto> AddUser(UserDto user)
         {
             try
             {
-                var res = _service.AddUser(user);
+                var res = await _service.AddUser(user);
+                 _loggingCommon.AddLoggingInformation(
+                    $"Thêm người dùng {user.Username}",
+                    user.UserId,
+                    LoggingType.NHAT_KY_THAO_TAC_QUAN_TRI
+                );
                 return res;
             }
             catch (Exception ex)
             {
+                _loggingCommon.AddLoggingError(
+                    $"Lỗi thêm người dùng: {ex.Message}",
+                    user.UserId,
+                    LoggingType.NHAT_KY_LOI_PHAT_SINH
+                );
                 throw new Exception(ex.Message);
             }
         }
@@ -104,10 +120,20 @@ namespace backend_v3.Controllers
             try
             {
                 await _service.EditInforUser(id, userData);
+                _loggingCommon.AddLoggingInformation(
+                    $"Thay đổi thông tin cá nhân",
+                    id,
+                    LoggingType.NHAT_KY_THAO_TAC_NGUOI_DUNG
+                );
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
+                _loggingCommon.AddLoggingError(
+                    $"Lỗi thay dổi thông tin cá nhân",
+                    userData.UserId,
+                    LoggingType.NHAT_KY_LOI_PHAT_SINH
+                );
                 return false;
             }
         }
@@ -118,24 +144,45 @@ namespace backend_v3.Controllers
             try
             {
                 await _service.EditInforUser_Admin(id, userData);
+                _loggingCommon.AddLoggingInformation(
+                    $"sửa thông tin người dùng {userData.Username}",
+                    userData.UserId,
+                    LoggingType.NHAT_KY_THAO_TAC_QUAN_TRI
+                );
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
+                _loggingCommon.AddLoggingError(
+                    $"Lỗi sửa người dùng: {ex.Message}",
+                    userData.UserId,
+                    LoggingType.NHAT_KY_LOI_PHAT_SINH
+                );
                 return false;
             }
         }
 
         [HttpDelete]
-        public async Task<bool> DeleteUser(string id)
+        public async Task<bool> DeleteUser(string id, string? userId)
         {
+            var user = _context.Users.FirstOrDefault(x => x.Id == id);
             try
             {
                 await _service.DeleteUser_Admin(id);
+                _loggingCommon.AddLoggingInformation(
+                    $"Xóa thông tin người dùng {user.Username}",
+                    userId,
+                    LoggingType.NHAT_KY_THAO_TAC_QUAN_TRI
+                );
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
+                _loggingCommon.AddLoggingError(
+                    $"Lỗi xóa người dùng: {ex.Message}",
+                    userId,
+                    LoggingType.NHAT_KY_LOI_PHAT_SINH
+                );
                 return false;
             }
         }
@@ -161,15 +208,26 @@ namespace backend_v3.Controllers
         }
 
         [HttpPut]
-        public async Task<bool> ResetPassWord(string id)
+        public async Task<bool> ResetPassWord(string id,string? userId)
         {
+            var user = _context.Users.FirstOrDefault(x => x.Id == id);
             try
             {
                 await _service.ResetPassWord(id);
+                _loggingCommon.AddLoggingInformation(
+                    $"Thay đổi lại mật khẩu cho người dùng {user.Username}",
+                    userId,
+                    LoggingType.NHAT_KY_THAO_TAC_QUAN_TRI
+                );
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
+                _loggingCommon.AddLoggingError(
+                    $"Lỗi đổi lại mật khẩu cho người dùng: {ex.Message}",
+                    userId,
+                    LoggingType.NHAT_KY_LOI_PHAT_SINH
+                );
                 return false;
             }
         }

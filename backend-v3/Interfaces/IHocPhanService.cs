@@ -6,7 +6,7 @@ namespace backend_v3.Interfaces
 {
     public interface IHocPhanService
     {
-        public Task<List<HocPhan>> GetAllHocPhan([FromQuery] string? ThuMucId, string? keySearch);
+        public Task<List<HocPhan>> GetAllHocPhan([FromQuery] string? ThuMucId, string? keySearch, string? userId);
         public Task ThemHocPhan([FromBody] HocPhanParams _params);
         public Task<List<TheHoc>> GetHocPhanById (string id);
         public Task<HocPhanDto> GetHocPhanName (string id);

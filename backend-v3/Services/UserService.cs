@@ -241,15 +241,16 @@ namespace backend_v3.Services
                 throw new Exception("Không tìm thấy id người dùng");
             }
 
-            var data = _context.Users.FirstOrDefault(x => x.Id == id);
-            var RoleUser = _context.UserRoles.FirstOrDefault(x => x.UserId == id);
-
+           var data = _context.Users.FirstOrDefault(x => x.Id == id);
             if (data == null)
             {
                 throw new Exception("User không tồn tại!");
             }
 
-            _context.Users.Remove(data);    
+            _context.Users.Remove(data);
+
+
+            var RoleUser = _context.UserRoles.FirstOrDefault(x => x.UserId == id);
             _context.UserRoles.Remove(RoleUser);
             await _context.SaveChangesAsync(new CancellationToken());
         }

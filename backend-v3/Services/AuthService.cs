@@ -2,6 +2,7 @@
 using backend_v3.Dto;
 using backend_v3.Interfaces;
 using backend_v3.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
@@ -201,6 +202,71 @@ namespace backend_v3.Services
                     SoDienThoai = user.SoDienThoai
                 };
                return userr;
+            }
+        }
+
+        public async Task ChangedPassword(string userId, ChangedPasswordDto dataChange)
+        {
+            try
+            {
+                var user = _context.Users.FirstOrDefault(x => x.Id == userId);
+                if (user == null)
+                {
+                    throw new Exception("Không tìm thấy dữ liệu người dùng!");
+                }
+
+                if(user.Password != GetMD5(dataChange.OldPassword))
+                {
+                    throw new Exception("Mật khẩu không đúng!");
+                }
+
+                if (user.Password == GetMD5(dataChange.OldPassword))
+                {
+                    user.Password = GetMD5(dataChange.NewPassword);
+                    _context.Users.Update(user);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task DeleteAccount(string userId, ChangedPasswordDto dataChange)
+        {
+            try
+            {
+                var user = _context.Users.FirstOrDefault(x => x.Id == userId);
+                if (user == null)
+                {
+                    throw new Exception("Không tìm thấy dữ liệu người dùng!");
+                }
+                if (user.Password != GetMD5(dataChange.OldPassword))
+                {
+                    throw new Exception("Mật khẩu không đúng!");
+                }
+
+                _context.Users.Remove(user);
+                await _context.SaveChangesAsync();
+
+                var thumuc = _context.ThuMucs.Where(x => x.UserId == userId).AsNoTracking();
+                _context.ThuMucs.RemoveRange(thumuc);
+                await _context.SaveChangesAsync();
+
+                var hocphans = _context.HocPhans.Where(x=> x.UserId == userId).AsNoTracking();
+                foreach (var item in hocphans)
+                {
+                    var thehoc = _context.TheHocs.Where(x => x.HocPhanId == item.Id).AsNoTracking();
+                    _context.TheHocs.RemoveRange(thehoc);
+                    await _context.SaveChangesAsync();
+                }
+                _context.HocPhans.RemoveRange(hocphans);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
     }

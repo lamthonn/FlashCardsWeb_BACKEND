@@ -112,5 +112,35 @@ namespace backend_v3.Controllers
             }
         }
 
+        [HttpPut]
+        public Task ChangePassword(string userId, ChangedPasswordDto data)
+        {
+            try
+            {
+                var addedUserfb = _auth.ChangedPassword(userId,data);
+                return addedUserfb;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+        }
+        
+        [HttpDelete]
+        public Task DeleteAccount(string userId, ChangedPasswordDto data)
+        {
+            try
+            {
+                var deleteAcc = _auth.DeleteAccount(userId,data);
+                return deleteAcc;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+        }
+
     }
 }

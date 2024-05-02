@@ -10,5 +10,7 @@ namespace backend_v3.Interfaces
         public string Login(LoginRequest loginRequest);
         public Role AddRole ( Role role);
         //bool AssignRoleToUser(AddUserRole obj);
+        public Task ChangedPassword(string userId, ChangedPasswordDto dataChange);
+        public Task DeleteAccount(string userId, ChangedPasswordDto dataChange);
     }
 }

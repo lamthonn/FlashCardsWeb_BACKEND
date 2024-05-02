@@ -28,11 +28,11 @@ namespace backend_v3.Controllers
         }
 
         [HttpGet]
-        public Task<List<HocPhan>> GetAllHocPhan ([FromQuery] string? ThuMucId, string? keySearch, string? userId)
+        public Task<List<HocPhan>> GetAllHocPhan ([FromQuery] string? ThuMucId, string? keySearch, string? userId, string? soft)
         {
             try
             {
-                return _services.GetAllHocPhan(ThuMucId, keySearch, userId);
+                return _services.GetAllHocPhan(ThuMucId, keySearch, userId, soft);
             }
             catch (Exception ex)
             {
@@ -77,11 +77,11 @@ namespace backend_v3.Controllers
         }
 
         [HttpGet]
-        public Task<List<TheHoc>> GetTheHocById([FromQuery] string id)
+        public Task<List<TheHoc>> GetTheHocById([FromQuery] string id, string? soft)
         {
             try
             {
-                return _services.GetHocPhanById(id);
+                return _services.GetHocPhanById(id, soft);
             }
             catch (Exception ex)
             {
@@ -143,6 +143,46 @@ namespace backend_v3.Controllers
             try
             {
                 return _services.GetRandom(id);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        
+        
+        [HttpGet]
+        public Task<object> GetCardForLearn(string id)
+        {
+            try
+            {
+                return _services.GetCardForLearn(id);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public Task<object> GetListCardForTest(string id)
+        {
+            try
+            {
+                return _services.GetListCardForTest(id);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public Task<bool> CheckResult1([FromBody] InputCheckTest input)
+        {
+            try
+            {
+                return _services.CheckResult1(input.Id, input.Answer);
             }
             catch (Exception ex)
             {

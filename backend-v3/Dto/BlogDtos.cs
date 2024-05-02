@@ -1,13 +1,10 @@
-﻿using backend_v3.Models.common;
-
-namespace backend_v3.Models
+﻿namespace backend_v3.Dto
 {
-    public class Blog : BaseModel
+    public class BlogDtos
     {
         public string Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public string? AnhDaiDien { get; set; } = null!;
-        public DateTime TimeCreated { get; set; }
     }
 }

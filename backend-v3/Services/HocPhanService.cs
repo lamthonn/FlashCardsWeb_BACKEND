@@ -116,7 +116,7 @@ namespace backend_v3.Services
             }
         }
 
-        public async Task<List<HocPhan>> GetAllHocPhan([FromQuery] string? ThuMucId, string? keySearch, string? userId)
+        public async Task<List<HocPhan>> GetAllHocPhan([FromQuery] string? ThuMucId, string? keySearch, string? userId, string? soft)
         {
             var data = _context.HocPhans.AsNoTracking();
             if (!string.IsNullOrEmpty(ThuMucId))
@@ -131,15 +131,23 @@ namespace backend_v3.Services
             {
                 data = data.Where(x => x.UserId == userId);
             }
+            if (!string.IsNullOrEmpty(soft))
+            {
+                data = data.OrderBy(x=> x.TieuDe);
+            }
             var result = await data.ToListAsync();
             return result;
         }
 
-        public async Task<List<TheHoc>> GetHocPhanById([FromQuery] string id)
+        public async Task<List<TheHoc>> GetHocPhanById([FromQuery] string id, string? soft)
         {
             try
             {
                 var ListTheHoc = _context.TheHocs.Where(x => x.HocPhanId == id);
+                if (!string.IsNullOrEmpty(soft))
+                {
+                    ListTheHoc = ListTheHoc.OrderBy(x => x.NgonNgu1);
+                }
                 var result = await ListTheHoc.ToListAsync();
                 return result;
             }
@@ -177,23 +185,25 @@ namespace backend_v3.Services
         public async Task<List<TheHoc>> GetRandom(string id)
         {
             var hocphan = _context.TheHocs.Where(x => x.HocPhanId == id);
-            var data = await hocphan.OrderBy(x => Guid.NewGuid()).Take(10).AsNoTracking().ToListAsync();
-            // Duplicate the list
-            //var duplicatedData = new List<TheHoc>(data);
+            var data = await hocphan.Take(10).AsNoTracking().ToListAsync();
+            
+            var resultList = new List<TheHoc>();
+            resultList.AddRange(data.OrderBy(x => Guid.NewGuid()));
+            resultList.AddRange(data.OrderBy(x => Guid.NewGuid()));
 
-            //// Shuffle the duplicated list
-            var rnd = new Random();
-            int n = data.Count;
-            while (n > 1)
-            {
-                n--;
-                int k = rnd.Next(n + 1);
-                var value = data[k];
-                data[k] = data[n];
-                data[n] = value;
-            }
+            ////// Shuffle the duplicated list
+            //var rnd = new Random();
+            //int n = data.Count;
+            //while (n > 1)
+            //{
+            //    n--;
+            //    int k = rnd.Next(n + 1);
+            //    var value = data[k];
+            //    data[k] = data[n];
+            //    data[n] = value;
+            //}
 
-            return data;
+            return resultList;
         }
 
         public async Task ThemHocPhan([FromBody] HocPhanParams _params)
@@ -243,6 +253,113 @@ namespace backend_v3.Services
             // Get DateTime object
             DateTime dateTime = dateTimeOffset.DateTime;
             return dateTime;
+        }
+
+        public async Task<object> GetCardForLearn(string id)
+        {
+            var hocphan = _context.TheHocs.Where(x => x.HocPhanId == id);
+            var data = await hocphan.OrderBy(x => Guid.NewGuid()).Take(4).AsNoTracking().ToListAsync();
+
+            var DinhNghia = data[0];
+            //var result = new LearnGameDto();
+            List<int> stt = new List<int> { 0, 1, 2, 3 };
+            List<int> shuffledList = Shuffle(stt);
+
+            
+            List<TheHoc> Thuatngus = new List<TheHoc>();
+            foreach (int i in shuffledList)
+            {
+                Thuatngus.Add(new TheHoc
+                {
+                    Id = data[i].Id,
+                    GiaiThich = data[i].GiaiThich,
+                    ThuatNgu = data[i].ThuatNgu,
+                    NgonNgu1 = data[i].NgonNgu1,
+                    NgonNgu2 = data[i].NgonNgu2,
+                });
+            }
+
+            return new
+            {
+                DinhNghia,
+                Thuatngus,
+            };
+        }
+
+        static List<T> Shuffle<T>(List<T> list)
+        {
+            Random rng = new Random();
+            int n = list.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = rng.Next(n + 1);
+                T value = list[k];
+                list[k] = list[n];
+                list[n] = value;
+            }
+            return list;
+        }
+
+        public async Task<object> GetListCardForTest(string id)
+        {
+            var hocphan = _context.TheHocs.Where(x => x.HocPhanId == id);
+            var data = await hocphan.OrderBy(x => Guid.NewGuid()).Take(30).AsNoTracking().ToListAsync();
+            
+            // Tính kích thước của mỗi phần
+            int partSize = data.Count / 3;
+
+            // Chia dữ liệu thành 3 phần
+            List<TheHoc> phan1 = data.Take(partSize).ToList();
+            List<TheHoc> phan2 = data.Skip(partSize).Take(partSize).ToList();
+            List<TheHoc> phan3 = data.Skip(2 * partSize).ToList();
+
+            List<object> dataPhan3 = new List<object>();
+            foreach(var hp in phan3)
+            {
+                // Lấy 2 phần tử ngẫu nhiên khác hp.id
+                var fakeData = await hocphan.Where(x => x.Id != hp.Id)
+                                            .OrderBy(x => Guid.NewGuid())
+                                            .Take(3)
+                                            .AsNoTracking()
+                                            .ToListAsync();
+
+                // Thêm phần tử hiện tại vào fakeData
+                fakeData.Add(hp);
+
+                // Đảo trộn fakeData để phần tử hiện tại không luôn luôn ở vị trí cuối cùng
+                fakeData = fakeData.OrderBy(x => Guid.NewGuid()).ToList();
+
+                // Thêm phần tử chính và các phần tử phụ vào danh sách
+                dataPhan3.Add(new { Main = hp, SubItems = fakeData });
+            }
+
+            var result = new
+            {
+                Phan1 = phan1,
+                Phan2 = phan2,
+                Phan3 = dataPhan3
+            };
+
+            return result;
+        }
+
+        public Task<bool> CheckResult1([FromBody] string id, string answer)
+        {
+            var result = _context.TheHocs.FirstOrDefault(x=> x.Id == id);
+            if (string.IsNullOrEmpty(id)) 
+            {
+                throw new Exception("Không thấy dữ liệu!");
+            }
+
+            if(result.NgonNgu2.ToLower() == answer.Trim().ToLower())
+            {
+                return Task.FromResult(true) ;
+            }
+            else
+            {
+                return Task.FromResult(false);
+            }
         }
     }
 }

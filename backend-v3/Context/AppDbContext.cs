@@ -17,6 +17,7 @@ namespace backend_v3.Context
         public DbSet<YkienGopY> YkienGopYs { get; set; }
         public DbSet<NhatKyHoatDong> NhatKyHoatDongs { get; set; }
         public DbSet<Blog> blogs { get; set; }
+        public DbSet<PaymentRecord> paymentRecords { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -1,6 +1,7 @@
 using backend_v3.Context;
 using backend_v3.Controllers.common;
 using backend_v3.Interfaces;
+using backend_v3.Models;
 using backend_v3.Seriloger;
 using backend_v3.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -36,6 +37,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     };
 });
 
+// Configure Stripe
+builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+Stripe.StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
+builder.Services.AddSingleton<StripePaymentService>();
+
 
 //CORS
 builder.Services.AddCors(options =>
@@ -65,6 +71,8 @@ builder.Services.AddTransient<IThuMucService, ThuMucService>();
 builder.Services.AddTransient<IMailService, MailService>();
 builder.Services.AddTransient<IYKienGopYService, YKienGopYService>();
 builder.Services.AddTransient<INhatKyHeThongService, NhatKyHeThongService>();
+builder.Services.AddScoped<StripePaymentService>();
+
 
 
 var app = builder.Build();
